@@ -1,0 +1,244 @@
+<%- include('../partial/header') %>
+
+<style>
+    .admin-wrapper { display: flex; min-height: 75vh; background: #fff; margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+    .sidebar { width: 250px; background: #2c3e50; color: white; padding: 20px 0; }
+    .sidebar h3 { text-align: center; margin-bottom: 20px; color: #18bc9c; border-bottom: 1px solid #34495e; padding-bottom: 15px; }
+    .sidebar ul { list-style: none; padding: 0; margin: 0; }
+    .sidebar ul li { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #34495e; transition: 0.3s; font-weight: bold; }
+    .sidebar ul li:hover, .sidebar ul li.active { background: #18bc9c; color: white; border-left: 5px solid #fff; }
+    .main-content { flex: 1; padding: 30px; background: #f4f6f9; }
+    .admin-tab { display: none; animation: fadeIn 0.4s; }
+    .admin-tab.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
+    th, td { border-bottom: 1px solid #eee; padding: 15px; text-align: left; }
+    th { background-color: #e9ecef; }
+    .box-form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.05); margin-bottom: 20px;}
+</style>
+
+<div class="container admin-wrapper">
+    <div class="sidebar">
+        <h3>Quản Trị Hệ Thống</h3>
+        <ul>
+            <li class="tab-btn active" data-target="tab-movies">🎬 Quản Lý Phim</li>
+            <li class="tab-btn" data-target="tab-categories">📁 Quản Lý Thể Loại</li>
+            <li class="tab-btn" data-target="tab-countries">🌍 Quản Lý Quốc Gia</li>
+            <li class="tab-btn" data-target="tab-inventory">📦 Quản Lý Kho Phim</li>
+            <li class="tab-btn" data-target="tab-users">👥 Quản Lý Người Dùng</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div id="tab-movies" class="admin-tab active">
+            <h2>🎬 Đăng Phim Mới</h2>
+            <div class="box-form">
+                <form action="/admin/movie/add" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Tên phim:</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Chọn Thể loại:</label>
+                            <select name="category" required>
+                                <option value="">-- Chọn thể loại --</option>
+                                <% categories.forEach(cat => { %>
+                                    <option value="<%= cat._id %>"><%= cat.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Chọn Quốc Gia:</label>
+                            <select name="country" required>
+                                <option value="">-- Chọn quốc gia --</option>
+                                <% countries.forEach(c => { %>
+                                    <option value="<%= c._id %>"><%= c.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Năm phát hành:</label>
+                            <input type="number" name="releaseYear" placeholder="Ví dụ: 2024" required>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Chọn Ảnh Bìa từ máy:</label>
+                            <input type="file" name="thumbnail" accept="image/*" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Link Video Phim (URL):</label>
+                            <input type="text" name="videoUrl">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                        <div class="form-group" style="flex: 1; margin: 0;">
+                            <label style="color: #856404; font-weight: bold;">🔥 Lượt Xem (Buff view):</label>
+                            <input type="number" name="views" value="0" min="0">
+                        </div>
+                        <div class="form-group" style="flex: 1; margin: 0;">
+                            <label style="color: #856404; font-weight: bold;">❤️ Lượt Thích (Buff like):</label>
+                            <input type="number" name="likes" value="0" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả ngắn:</label>
+                        <textarea name="description" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">+ Đăng Phim</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tab-categories" class="admin-tab">
+            <h2>📁 Quản Lý Thể Loại</h2>
+            <div class="box-form">
+                <form action="/admin/category/add" method="POST" style="display: flex; gap: 10px; align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label>Tên thể loại:</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group" style="flex: 2; margin: 0;">
+                        <label>Mô tả:</label>
+                        <input type="text" name="description">
+                    </div>
+                    <button type="submit" class="btn" style="background: #28a745;">+ Thêm</button>
+                </form>
+            </div>
+            <table>
+                <tr><th>Tên Thể Loại</th><th>Mô Tả</th></tr>
+                <% categories.forEach(cat => { %>
+                    <tr><td><strong><%= cat.name %></strong></td><td><%= cat.description %></td></tr>
+                <% }) %>
+            </table>
+        </div>
+
+        <div id="tab-countries" class="admin-tab">
+            <h2>🌍 Quản Lý Quốc Gia</h2>
+            <div class="box-form">
+                <form id="formCountry" action="/admin/country/add" method="POST" style="display: flex; gap: 10px; align-items: flex-end;">
+                    <input type="hidden" name="countryId" id="countryId">
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label>Tên quốc gia:</label>
+                        <input type="text" name="name" id="countryName" required>
+                    </div>
+                    <div class="form-group" style="flex: 2; margin: 0;">
+                        <label>Mô tả:</label>
+                        <input type="text" name="description" id="countryDesc">
+                    </div>
+                    <button type="submit" id="btnCountrySubmit" class="btn" style="background: #28a745;">+ Thêm Quốc Gia</button>
+                    <button type="button" id="btnCountryCancel" class="btn" style="background: #6c757d; display: none;" onclick="cancelEditCountry()">Hủy</button>
+                </form>
+            </div>
+            <table>
+                <tr><th>Tên Quốc Gia</th><th>Mô Tả</th><th>Hành Động</th></tr>
+                <% countries.forEach(c => { %>
+                    <tr>
+                        <td><strong><%= c.name %></strong></td>
+                        <td><%= c.description %></td>
+                        <td>
+                            <button onclick="editCountry('<%= c._id %>', '<%= c.name %>', '<%= c.description %>')" class="btn" style="background: #ffc107; color: black; padding: 5px 10px;">Sửa</button>
+                            <a href="/admin/country/delete/<%= c._id %>" onclick="return confirm('Bạn có chắc chắn muốn xóa quốc gia này?');">
+                                <button class="btn" style="background: #dc3545; padding: 5px 10px;">Xóa</button>
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+
+        <div id="tab-inventory" class="admin-tab">
+            <h2>📦 Quản Lý Kho Phim</h2>
+            <table>
+                <tr>
+                    <th>Tên Phim</th>
+                    <th>Năm</th> <th>Thể Loại</th>
+                    <th>Quốc Gia</th> 
+                    <th>Lượt Xem</th>
+                    <th>Trạng Thái</th>
+                </tr>
+                <% movies.forEach(movie => { %>
+                    <tr>
+                        <td><strong><%= movie.title %></strong></td>
+                        <td><%= movie.releaseYear || 'N/A' %></td> <td><%= movie.category ? movie.category.name : 'N/A' %></td>
+                        <td><%= movie.country ? movie.country.name : 'N/A' %></td> 
+                        <td>👁️ <%= movie.views %></td>
+                        <td><span style="color: green;">Đang chiếu</span></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+
+        <div id="tab-users" class="admin-tab">
+            <h2>👥 Phân Quyền Tài Khoản</h2>
+            <table>
+                <tr><th>Tên</th><th>Email</th><th>Vai Trò</th><th>Hành Động</th></tr>
+                <% users.forEach(u => { %>
+                    <tr>
+                        <td><%= u.name %></td><td><%= u.email %></td>
+                        <td>
+                            <span style="padding: 5px 10px; border-radius: 5px; background: <%= u.role === 'admin' ? '#ffc107' : '#17a2b8' %>; color: white; font-size: 12px;">
+                                <%= u.role.toUpperCase() %>
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/admin/user/role" method="POST" style="display: flex; gap: 10px;">
+                                <input type="hidden" name="userId" value="<%= u._id %>">
+                                <select name="role" style="padding: 5px; border-radius: 4px;">
+                                    <option value="user" <%= u.role === 'user' ? 'selected' : '' %>>User</option>
+                                    <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                </select>
+                                <button type="submit" class="btn" style="padding: 5px 15px; font-size: 14px;">Lưu</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Xử lý chuyển Tab
+    const buttons = document.querySelectorAll('.tab-btn');
+    const tabs = document.querySelectorAll('.admin-tab');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            tabs.forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    function editCountry(id, name, desc) {
+        document.getElementById('formCountry').action = '/admin/country/edit';
+        document.getElementById('countryId').value = id;
+        document.getElementById('countryName').value = name;
+        document.getElementById('countryDesc').value = desc;
+        document.getElementById('btnCountrySubmit').innerHTML = '💾 Lưu Thay Đổi';
+        document.getElementById('btnCountrySubmit').style.background = '#ffc107';
+        document.getElementById('btnCountrySubmit').style.color = 'black';
+        document.getElementById('btnCountryCancel').style.display = 'block';
+    }
+
+    function cancelEditCountry() {
+        document.getElementById('formCountry').action = '/admin/country/add';
+        document.getElementById('countryId').value = '';
+        document.getElementById('countryName').value = '';
+        document.getElementById('countryDesc').value = '';
+        document.getElementById('btnCountrySubmit').innerHTML = '+ Thêm Quốc Gia';
+        document.getElementById('btnCountrySubmit').style.background = '#28a745';
+        document.getElementById('btnCountrySubmit').style.color = 'white';
+        document.getElementById('btnCountryCancel').style.display = 'none';
+    }
+</script>
+
+<%- include('../partial/footer') %>

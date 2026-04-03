@@ -1,0 +1,44 @@
+<%- include('../partial/header') %>
+
+<h2>🔥 Phim Mới Cập Nhật</h2>
+<div class="movie-grid">
+    <% newMovies.forEach(movie => { %>
+        <div class="movie-card">
+    <a href="/movie/<%= movie._id %>" style="text-decoration: none; color: inherit;">
+        <img src="<%= movie.thumbnail %>" alt="<%= movie.title %>">
+        <h3><%= movie.title %></h3>
+    </a>
+    <p style="font-size: 13px; color: #666;">
+        📅 <%= movie.releaseYear %> | 👁️ <%= movie.views %> lượt xem
+    </p>
+</div>
+    <% }) %>
+</div>
+
+<h2 style="margin-top: 40px;">📈 Xem Nhiều Nhất</h2>
+<div class="movie-grid">
+    <% topViews.forEach(movie => { %>
+        <div class="movie-card">
+            <a href="/movie/<%= movie._id %>" style="text-decoration: none; color: inherit;">
+                <img src="<%= movie.thumbnail || 'https://via.placeholder.com/200x300?text=No+Image' %>" alt="<%= movie.title %>">
+                <h3><%= movie.title %></h3>
+            </a>
+            <p>👁️ <%= movie.views %> lượt xem</p>
+        </div>
+    <% }) %>
+</div>
+
+<h2 style="margin-top: 40px;">❤️ Được Yêu Thích</h2>
+<div class="movie-grid">
+    <% topLikes.forEach(movie => { %>
+        <div class="movie-card">
+            <a href="/movie/<%= movie._id %>" style="text-decoration: none; color: inherit;">
+                <img src="<%= movie.thumbnail || 'https://via.placeholder.com/200x300?text=No+Image' %>" alt="<%= movie.title %>">
+                <h3><%= movie.title %></h3>
+            </a>
+            <p>❤️ <%= movie.likes %> lượt thích</p>
+        </div>
+    <% }) %>
+</div>
+
+<%- include('../partial/footer') %>

@@ -1,0 +1,62 @@
+<%- include('../partial/header') %>
+
+<div class="container" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px;">
+    <div style="width: 100%; text-align: center; background: #000; border-radius: 8px; overflow: hidden;">
+        <iframe width="100%" height="500px" src="<%= movie.videoUrl %>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <h1 style="color: #d9534f; margin-top: 20px;"><%= movie.title %></h1>
+    
+    <div style="display: flex; gap: 20px; color: #555; margin-bottom: 20px; font-weight: bold;">
+        <span>👁️ Lượt xem: <%= movie.views %></span>
+        <span>📁 Thể loại: <%= movie.category ? movie.category.name : 'Chưa cập nhật' %></span>
+        <span>🌍 Quốc gia: <%= movie.country ? movie.country.name : 'Chưa cập nhật' %></span>
+    </div>
+
+    <button class="btn" style="background: #e50914; margin-bottom: 20px;">❤️ Yêu thích phim này</button>
+
+    <div style="border-top: 1px solid #eee; padding-top: 20px;">
+        <h3>Nội dung phim:</h3>
+        <p style="line-height: 1.6; color: #444;"><%= movie.description %></p>
+    </div>
+
+    <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
+        <h3 style="margin-bottom: 20px;">💬 Bình luận (<%= comments ? comments.length : 0 %>)</h3>
+
+        <% if (user) { %>
+            <form action="/comment/add" method="POST" style="display: flex; gap: 10px; margin-bottom: 30px;">
+                <input type="hidden" name="movieId" value="<%= movie._id %>">
+                <input type="text" name="content" placeholder="Viết bình luận của bạn về phim này..." required style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                <button type="submit" class="btn" style="background: #e50914; padding: 0 25px;">Gửi</button>
+            </form>
+        <% } else { %>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+                <p style="color: #666; margin: 0;">Vui lòng <a href="/login" style="color: #e50914; font-weight: bold;">Đăng nhập</a> để tham gia bình luận.</p>
+            </div>
+        <% } %>
+
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <% if (comments && comments.length > 0) { %>
+                <% comments.forEach(c => { %>
+                    <div style="background: #f4f6f9; padding: 15px; border-radius: 8px; position: relative;">
+                        <strong style="color: #007bff; font-size: 16px;"><%= c.user ? c.user.name : 'Người dùng ẩn danh' %></strong>
+                        <span style="font-size: 12px; color: #888; margin-left: 10px;">
+                            <%= c.createdAt.toLocaleString('vi-VN') %>
+                        </span>
+                        <p style="margin: 10px 0 0 0; color: #333; line-height: 1.5;"><%= c.content %></p>
+
+                        <% if (user && user.role === 'admin') { %>
+                            <a href="/admin/comment/delete/<%= c._id %>" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');" style="position: absolute; top: 15px; right: 15px; color: #dc3545; text-decoration: none; font-size: 14px; font-weight: bold;">
+                                🗑️ Xóa
+                            </a>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="color: #888; font-style: italic;">Chưa có bình luận nào. Hãy là người đầu tiên bóc tem!</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('../partial/footer') %>

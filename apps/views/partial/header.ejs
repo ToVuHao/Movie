@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Xem Phim</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f6f9; color: #333; }
+        header { background: #1a1a1a; color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        header a { color: #fff; text-decoration: none; margin-right: 20px; font-weight: bold; transition: 0.3s; }
+        header a:hover { color: #e50914; }
+        .nav-menu { display: flex; align-items: center; flex: 1; }
+        .logo { font-size: 24px; color: #e50914 !important; margin-right: 40px; }
+        .dropdown { position: relative; display: inline-block; margin-right: 20px;}
+        .dropdown > a { cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .dropdown-content { display: none; position: absolute; background-color: #2b2b2b; min-width: 180px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 100; border-radius: 5px; overflow: hidden; top: 100%; left: 0; }
+        .dropdown-content a { color: white; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #444; margin: 0; }
+        .dropdown-content a:hover { background-color: #e50914; padding-left: 20px; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .search-form { display: flex; margin-right: 30px; flex: 1; max-width: 400px; }
+        .search-form input { width: 100%; padding: 8px 15px; border-radius: 20px 0 0 20px; border: none; outline: none; font-size: 14px; }
+        .search-form button { padding: 8px 15px; border-radius: 0 20px 20px 0; border: none; background: #e50914; color: white; cursor: pointer; font-weight: bold; }
+        .search-form button:hover { background: #b20710; }
+        .container { width: 90%; max-width: 1200px; margin: 20px auto; }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .movie-card { background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; transition: 0.3s; }
+        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .movie-card img { width: 100%; height: 280px; object-fit: cover; border-radius: 5px; }
+        .movie-card h3 { font-size: 16px; margin: 10px 0; color: #d9534f; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-menu">
+            <a href="/" class="logo">🎬 Phim Mới</a>
+            <a href="/">Trang Chủ</a>
+            
+            <div class="dropdown">
+                <a href="#">Thể Loại ▾</a>
+                <div class="dropdown-content">
+                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                        <% categories.forEach(cat => { %>
+                            <a href="/category/<%= cat._id %>"><%= cat.name %></a>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <a href="#">Quốc Gia ▾</a>
+                <div class="dropdown-content">
+                    <% if (typeof countries !== 'undefined' && countries.length > 0) { %>
+                        <% countries.forEach(c => { %>
+                            <a href="/country/<%= c._id %>"><%= c.name %></a>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="keyword" placeholder="Nhập tên phim cần tìm..." required>
+            <button type="submit">Tìm kiếm</button>
+        </form>
+
+        <div>
+            <% if (user) { %>
+                <span style="margin-right: 15px;">Xin chào, <strong><%= user.name %></strong>!</span>
+                <% if (user.role === 'admin') { %>
+                    <a href="/admin" style="color: #ffc107;">⚙️ Quản Trị</a>
+                <% } %>
+                <a href="/logout" style="color: #ff4d4d;">Đăng Xuất</a>
+            <% } else { %>
+                <a href="/login">Đăng Nhập</a>
+                <a href="/register" style="background: #e50914; padding: 5px 10px; border-radius: 5px;">Đăng Ký</a>
+            <% } %>
+        </div>
+    </header>
+    <div class="container">

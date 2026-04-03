@@ -1,0 +1,22 @@
+<%- include('../partial/header') %>
+<div style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center;">Đăng Nhập</h2>
+    
+    <% if (error) { %>
+        <p style="color: red; text-align: center; background: #ffe6e6; padding: 10px; border-radius: 5px;"><%= error %></p>
+    <% } %>
+
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu:</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Đăng Nhập</button>
+    </form>
+    <p style="text-align: center; margin-top: 15px;">Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
+</div>
+<%- include('../partial/footer') %>
